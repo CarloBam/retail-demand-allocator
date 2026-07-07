@@ -15,8 +15,12 @@ def query_db(sql, params=()):
     """Run a read query and return rows as dictionaries."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    rows = conn.execute(sql, params).fetchall()
-    conn.close()
+    try:
+        rows = conn.execute(sql, params).fetchall()
+    except sqlite3.OperationalError:
+        rows = []
+    finally:
+        conn.close()
     return [dict(row) for row in rows]
 
 

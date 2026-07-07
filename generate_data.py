@@ -6,6 +6,8 @@ import sqlite3
 import numpy as np
 import pandas as pd
 
+DB_PATH = "retail.db"
+
 STORES = ["Canal Walk", "Promenade", "Tygervalley", "Gardens", "Somerset Mall"]
 PRODUCTS = [
     ("Ground Coffee 250g", "Beverages"),
@@ -29,8 +31,10 @@ PRODUCTS = [
     ("Chocolate Slab 80g", "Snacks"),
     ("Mixed Nuts 200g", "Snacks"),
 ]
+
 DATES = pd.date_range("2024-07-01", "2026-06-30")
 np.random.seed(42)
+
 
 def create_tables(conn):
     conn.executescript("""
@@ -59,19 +63,17 @@ def create_tables(conn):
             promo INTEGER NOT NULL
         );
     """)
-        
+
     for store_id, name in enumerate(STORES, start=1):
         conn.execute("INSERT INTO stores (id, name) VALUES (?, ?)", (store_id, name))
 
     for product_id, (name, category) in enumerate(PRODUCTS, start=1):
-        stock = int(np.random.randint(800, 2000))
-        conn.execute(
-            "INSERT INTO products (id, name, category, warehouse_stock) VALUES (?, ?, ?, ?)",
-            (product_id, name, category, stock),
-        )
+        stock = int(np.random.randint(500, 1500))
+        conn.execute("INSERT INTO products (id, name, category, warehouse_stock) VALUES (?, ?, ?, ?)", (product_id, name, category, stock))
 
     conn.commit()
-    
+
+
 def build_sales_rows():
     weekday_factor = {0: 0.85, 1: 0.95, 2: 1.0, 3: 1.0, 4: 1.1, 5: 1.4, 6: 1.15}
     rows = []
@@ -92,25 +94,21 @@ def build_sales_rows():
                     expected *= 0.85
 
                 promo = np.random.random() < 0.05
+
                 if promo:
                     expected *= 1.6
 
                 units = np.random.poisson(expected)
 
-                rows.append(
-                    (store_id, product_id, date.strftime("%Y-%m-%d"),
-                     int(units), int(promo))
-                )
+                rows.append((store_id, product_id, date.strftime("%Y-%m-%d"), int(units), int(promo)))
 
     return rows
 
+
 def insert_data(conn, rows):
-    conn.executemany(
-        "INSERT INTO sales (store_id, product_id, sale_date, units_sold, promo) "
-        "VALUES (?, ?, ?, ?, ?)",
-        rows,
-    )
+    conn.executemany("INSERT INTO sales (store_id, product_id, sale_date, units_sold, promo) VALUES (?, ?, ?, ?, ?)", rows)
     conn.commit()
+
 
 def verify(conn):
     df = pd.read_sql("SELECT sale_date, units_sold FROM sales", conn)
@@ -119,8 +117,9 @@ def verify(conn):
     print(f"Total rows: {len(df):,}")
     print(df.groupby("weekday")["units_sold"].mean().round(2))
 
+
 if __name__ == "__main__":
-    conn = sqlite3.connect("retail.db")
+    conn = sqlite3.connect(DB_PATH)
     create_tables(conn)
     rows = build_sales_rows()
     insert_data(conn, rows)

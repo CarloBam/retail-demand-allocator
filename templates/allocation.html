@@ -6,7 +6,7 @@
 {% if summary %}
 <p class="metrics">
     Expected fulfilled demand: optimiser {{ "{:,}".format(summary.optimal_fulfilled) }} units,
-    naive proportional split {{ "{:,}".format(summary.naive_fulfilled) }} units.
+    naive even split {{ "{:,}".format(summary.naive_fulfilled) }} units.
     Gain from optimisation:
     {{ "{:,}".format(summary.optimal_fulfilled - summary.naive_fulfilled) }} units.
 </p>
