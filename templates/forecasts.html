@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Demand forecasts</h2>
+
+{% if metrics %}
+<p class="metrics">
+    Test set performance: MAE {{ metrics.mae }}, RMSE {{ metrics.rmse }}.
+    Metrics are computed on the held out test partition only.
+</p>
+{% else %}
+<p class="notice">No metrics found. Run forecast.py to train the model and
+populate the forecasts and metrics tables.</p>
+{% endif %}
+
+{% if rows %}
+<table>
+    <thead>
+        <tr>
+            <th>Store</th>
+            <th>Product</th>
+            <th>Date</th>
+            <th>Predicted units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.store_name }}</td>
+            <td>{{ row.product_name }}</td>
+            <td>{{ row.forecast_date }}</td>
+            <td>{{ row.predicted_units }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No forecasts to display yet.</p>
+{% endif %}
+{% endblock %}

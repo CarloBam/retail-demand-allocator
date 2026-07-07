@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Overview</h2>
+
+<div class="cards">
+    <div class="card">
+        <p class="card-label">Sales records</p>
+        <p class="card-value">{{ "{:,}".format(totals.sale_rows) }}</p>
+    </div>
+    <div class="card">
+        <p class="card-label">Total units sold</p>
+        <p class="card-value">{{ "{:,}".format(totals.total_units) }}</p>
+    </div>
+    <div class="card">
+        <p class="card-label">Date range</p>
+        <p class="card-value">{{ totals.first_date }} to {{ totals.last_date }}</p>
+    </div>
+</div>
+
+<h2>Average units sold by weekday</h2>
+<p>Weekday 0 is Sunday, 6 is Saturday. The weekend uplift and weekday dip
+should be visible here if the data generator is working correctly.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Weekday</th>
+            <th>Average units per record</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in by_weekday %}
+        <tr>
+            <td>{{ row.weekday }}</td>
+            <td>{{ row.avg_units }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Stock allocation</h2>
+
+{% if summary %}
+<p class="metrics">
+    Expected fulfilled demand: optimiser {{ "{:,}".format(summary.optimal_fulfilled) }} units,
+    naive proportional split {{ "{:,}".format(summary.naive_fulfilled) }} units.
+    Gain from optimisation:
+    {{ "{:,}".format(summary.optimal_fulfilled - summary.naive_fulfilled) }} units.
+</p>
+{% else %}
+<p class="notice">No allocation results found. Run allocate.py to solve the
+allocation problem and populate the allocations and summary tables.</p>
+{% endif %}
+
+{% if rows %}
+<table>
+    <thead>
+        <tr>
+            <th>Store</th>
+            <th>Product</th>
+            <th>Optimised units</th>
+            <th>Naive split units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.store_name }}</td>
+            <td>{{ row.product_name }}</td>
+            <td>{{ row.optimal_units }}</td>
+            <td>{{ row.naive_units }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No allocations to display yet.</p>
+{% endif %}
+{% endblock %}
