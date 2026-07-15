@@ -1,5 +1,5 @@
 # Retail Demand Forecasting and Stock Allocation Simulator
-#### Video Demo: <URL will be pased here after I record it>
+#### Video Demo: <https://youtu.be/eOYbS8ZwUG0>
 #### Description:
 
 This project is a small decision support tool for a fictional retail chain. It generates two years of synthetic daily sales data for 5 stores and 20 products, trains a machine learning model to forecast demand for the next week, and then uses linear programming to decide how a limited warehouse stock should be allocated across the stores. A Flask web application presents the results in three pages, a dashboard with summary statistics, a forecasts page showing the model predictions and test metrics, and an allocation page comparing the optimiser against a simple rule of thumb.
